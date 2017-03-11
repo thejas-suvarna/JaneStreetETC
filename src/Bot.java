@@ -13,6 +13,7 @@ public class Bot {
     private BufferedReader from_exchange;
     private PrintWriter to_exchange;
     private int orderID = 1;
+    private String stream;
 
     public Bot() {
         initializeConnection();
@@ -28,7 +29,8 @@ public class Bot {
             String reply = from_exchange.readLine().trim();
             System.err.printf("The exchange replied: %s\n", reply);
         } catch (Exception e) {
-            e.printStackTrace(System.out);
+            //e.printStackTrace(System.out);
+            initializeConnection();
         }
     }
 
@@ -116,6 +118,8 @@ public class Bot {
 
     public static void main(String[] args) {
         Bot b = new Bot();
-        b.trade();
+        while(true) {
+            b.trade();
+        }
     }
 }
