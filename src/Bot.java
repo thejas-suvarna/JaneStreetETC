@@ -7,16 +7,23 @@ import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bot {
 
     private BufferedReader from_exchange;
     private PrintWriter to_exchange;
     private int orderID = 1;
-    private String stream;
+    private String dataStream;
+    private List<Integer> buyPrice, buyAmount, sellPrice, sellAmount;
 
     public Bot() {
         initializeConnection();
+        buyPrice = new ArrayList<Integer>();
+        buyAmount = new ArrayList<Integer>();
+        sellPrice = new ArrayList<Integer>();
+        sellAmount = new ArrayList<Integer>();
     }
 
     public void initializeConnection() {
@@ -34,23 +41,26 @@ public class Bot {
         }
     }
 
+    public void readData() {
+        int buyStart = dataStream.indexOf("BUY") + 4;
+        int sellStart = dataStream.indexOf("SELL") + 5;
+        String buyList = dataStream.substring(buyStart, sellStart - 1);
+        //for()
+    }
+
     public void trade() {
         try {
-            int buyPrice = 0;
-            while (true) {
-                String replyStream = from_exchange.readLine().trim();
+            while(true) {
+                dataStream = from_exchange.readLine().trim();
                 //System.err.printf("The exchange replied: %s\n", replyStream);
-                if (replyStream.contains("BOND") && replyStream.contains("BOOK")) {
+                if (dataStream.contains("BOND") && dataStream.contains("BOOK")) {
                     //System.err.printf("The exchange replied: %s\n", replyStream);
-                    int buyPricetemp = buyBond(replyStream);
-                    if (buyPricetemp != -1) {
-                        if (buyPricetemp > buyPrice){
-                            buyPrice = buyPricetemp;
-                        }
+                    int buyPrice = buyBond(dataStream);
+                    if (buyPrice != -1) {
                         String buyReply = from_exchange.readLine().trim();
                         System.err.printf("The exchange replied: %s\n", buyReply);
                     }
-                    int sellPrice = sellBond(replyStream, buyPrice);
+                    int sellPrice = sellBond(dataStream, buyPrice);
                     if (sellPrice != -1) {
                         String sellReply = from_exchange.readLine().trim();
                         System.err.printf("The exchange replied: %s\n", sellReply);
@@ -61,28 +71,6 @@ public class Bot {
             //e.printStackTrace(System.out);
             initializeConnection();
         }
-    }
-
-        public int calcFairValue(String Stream, String Ticker){
-        int maxBuy = 0, minSell = 0, buy, sell, buyPos, sellPos;
-        int index1 = Stream.indexOf("BUY");
-        int index2 = Stream.indexOf("SELL");
-        String buyStream = Stream.substring(index1+4,index2-1);
-        String sellStream = Stream.substring(index2+5);
-        int indexcol = Stream.indexOf(':');
-        while(indexcol != -1){
-            buy = Integer.parseInt(buyStream.substring(0,indexcol-1));
-            if(buy > maxBuy){
-                maxBuy = buy;
-            }
-                    }
-
-        return 0;
-    }
-
-    public Bot(BufferedReader from_exchange, PrintWriter to_exchange) {
-        this.from_exchange = from_exchange;
-        this.to_exchange = to_exchange;
     }
 
     public int buyBond(String stream) {
@@ -130,7 +118,7 @@ public class Bot {
             int lowprice = Integer.parseInt(lowestSell);
             int sellprice;
             String trans;
-            if (lowprice >= buyPrice) {
+            if (lowprice >= 1001) {
                 sellprice = lowprice - 1;
                 trans = "ADD " + orderID + " BOND SELL " + sellprice + " " + position;
                 System.out.println("Sending: " + trans);
