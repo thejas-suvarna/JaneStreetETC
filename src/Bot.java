@@ -131,13 +131,13 @@ public class Bot {
                 fairValue = calcFairValue();
                 //System.out.println("Fair Value: " + fairValue);
                 //System.err.printf("The exchange replied: %s\n", replyStream);
-                if(dataStream.contains("BOOK") && dataStream.contains("BOND")) {
+                if(dataStream.contains("BOOK") && fairValue != -1 && dataStream.contains("BOND")) {
 
                     buy(1000);
                     sell(1000);
                 }
 
-                else if(dataStream.contains("BOOK") && fairValue != -1) {
+                else if(dataStream.contains("BOOK") && fairValue != -1 && fairValueVALBZ != -1) {
                     if(dataStream.contains("VALBZ")){
                         fairValueVALBZ = fairValue;
                     }
