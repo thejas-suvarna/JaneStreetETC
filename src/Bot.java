@@ -58,6 +58,7 @@ public class Bot {
             //System.out.println(dataStream);
             if (!dataStream.contains("BUY SELL")) {
                 char[] buyList = dataStream.substring(buyStart + 4, sellStart - 1).toCharArray();
+                //System.out.println("buyList: " + dataStream.substring(buyStart + 4, sellStart - 1));
                 for (char c : buyList) {
                     if (c == ':' || c == ' ') {
                         buyData.add(Integer.parseInt(buyTemp));
@@ -66,6 +67,8 @@ public class Bot {
                         buyTemp += c;
                     }
                 }
+                buyData.add(Integer.parseInt(buyTemp));
+                //System.out.println("buyData: " + buyData);
                 for (int i = 0; i < buyData.size(); i++) {
                     if (i % 2 == 0) {
                         buyPrice.add(buyData.get(i));
@@ -79,6 +82,7 @@ public class Bot {
             List<Integer> sellData = new ArrayList<Integer>();
             if (sellStart + 4 != dataStream.length()) {
                 char[] sellList = dataStream.substring(sellStart + 5).toCharArray();
+                //System.out.println("sellList: " + dataStream.substring(sellStart + 5));
                 if (sellList.length > 0) {
                     for (char c : sellList) {
                         if (c == ':' || c == ' ') {
@@ -88,6 +92,8 @@ public class Bot {
                             sellTemp += c;
                         }
                     }
+                    sellData.add(Integer.parseInt(sellTemp));
+                    //System.out.println("sellData: " + sellData);
                     for (int i = 0; i < sellData.size(); i++) {
                         if (i % 2 == 0) {
                             sellPrice.add(sellData.get(i));
@@ -111,6 +117,11 @@ public class Bot {
     public void trade() {
         try {
             while(true) {
+                //System.out.println("buyPrice: " + buyPrice);
+                //System.out.println("buyAmount: " + buyAmount);
+                //System.out.println("sellPrice: " + sellPrice);
+                //System.out.println("sellAmount: " + sellAmount);
+
                 clearData();
                 dataStream = from_exchange.readLine().trim();
                 readData();
@@ -119,11 +130,12 @@ public class Bot {
                 //System.out.println("Fair Value: " + fairValue);
                 //System.err.printf("The exchange replied: %s\n", replyStream);
                 if(dataStream.contains("BOOK") && dataStream.contains("BOND")) {
+
                     buy(1000);
                     sell(1000);
                 }
 
-                if(dataStream.contains("BOOK") && fairValue != -1) {
+                else if(dataStream.contains("BOOK") && fairValue != -1) {
                     if(dataStream.contains("VALE")){
                         fairValueVALE = fairValue;
                     }
