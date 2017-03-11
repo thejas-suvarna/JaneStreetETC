@@ -122,6 +122,7 @@ public class Bot {
                     if(sellPrice != -1) {
                         String sellReply = from_exchange.readLine().trim();
                         System.err.printf("The exchange replied: %s\n", sellReply);
+
                     }
                 }
             }
