@@ -202,66 +202,6 @@ public class Bot {
         }
     }
 
-    //************************************************************************************************************************************************
-    //VALE
-
-    public int buyVale(String stream, int Fair_val) {
-        //int sellStart = replyStream.indexOf("SELL");
-        int pos = stream.lastIndexOf("SELL");
-        if(pos != -1) {
-            String sellInfo = stream.substring(pos);
-            int end = stream.indexOf(':', pos);
-            if(end != -1) {
-                String highestBuy = stream.substring(pos + 5, end);
-                //System.out.println(lowestSell);
-                int infoend = stream.indexOf(' ', end);
-                String numtoSell = "";
-                if (infoend == -1) {
-                    numtoSell = stream.substring(end + 1);
-                } else {
-                    numtoSell = stream.substring(end + 1, infoend);
-                }
-                int position = Integer.parseInt(numtoSell);
-                int cost = Integer.parseInt(highestBuy);
-                int sellprice;
-                String trans;
-
-                if (cost < Fair_val) {
-                    String sendBuy = "ADD " + orderID + " VALE BUY " + cost + " " + position;
-                    System.out.println("Sending: " + sendBuy);
-                    to_exchange.println(sendBuy);
-                    orderID++;
-                    return cost;
-                }
-            }
-        }
-        return -1;
-    }
-
-    public int sellVale(String stream, int buyPrice, int Fair_val) {
-        int pos = stream.lastIndexOf("BUY");
-        if(pos != -1 && !stream.contains("BUY SELL")) {
-            int end = stream.indexOf(':', pos);
-            String lowestSell = stream.substring(pos + 4, end);
-            //System.out.println(lowestSell);
-            int infoend = stream.indexOf(' ', end);
-            String numtoSell = stream.substring(end + 1, infoend);
-            int position = Integer.parseInt(numtoSell);
-            int lowprice = Integer.parseInt(lowestSell);
-            int sellprice;
-            String trans;
-            if (lowprice >= Fair_val+1) {
-                sellprice = lowprice - 1;
-                trans = "ADD " + orderID + " VALE SELL " + sellprice + " " + position;
-                System.out.println("Sending: " + trans);
-                to_exchange.println(trans);
-                orderID++;
-                return sellprice;
-            }
-        }
-        return -1;
-    }
-
     public static void main(String[] args) {
         Bot b = new Bot();
         while(true) {
