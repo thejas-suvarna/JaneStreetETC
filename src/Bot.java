@@ -70,7 +70,7 @@ public class Bot {
         return -1;
     }
 
-    public int sellBond(String stream) {
+    public int sellBond(String stream, int buyPrice) {
         int pos = stream.lastIndexOf("BUY");
         if(pos != -1) {
             int end = stream.indexOf(':', pos);
@@ -82,7 +82,7 @@ public class Bot {
             int lowprice = Integer.parseInt(lowestSell);
             int sellprice;
             String trans;
-            if (lowprice >= 1001) {
+            if (lowprice >= buyPrice) {
                 sellprice = lowprice - 1;
                 trans = "ADD " + orderID + " BOND SELL " + sellprice + " " + position;
                 System.out.println("Sending: " + trans);
@@ -118,7 +118,7 @@ public class Bot {
                         String buyReply = from_exchange.readLine().trim();
                         System.err.printf("The exchange replied: %s\n", buyReply);
                     }
-                    int sellPrice = b.sellBond(replyStream);
+                    int sellPrice = b.sellBond(replyStream, buyPrice);
                     if(sellPrice != -1) {
                         String sellReply = from_exchange.readLine().trim();
                         System.err.printf("The exchange replied: %s\n", sellReply);
