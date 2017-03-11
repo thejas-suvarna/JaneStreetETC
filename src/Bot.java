@@ -31,6 +31,7 @@ public class Bot {
 
     public void initializeConnection() {
         try {
+
             //Socket skt = new Socket("production", 20000);
             Socket skt = new Socket("test-exch-abcde", 20000);
             from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
