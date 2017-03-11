@@ -14,9 +14,8 @@ public class Bot {
     private PrintWriter to_exchange;
     private int orderID = 1;
 
-    public Bot(BufferedReader from_exchange, PrintWriter to_exchange) {
-        this.from_exchange = from_exchange;
-        this.to_exchange = to_exchange;
+    public Bot() {
+        initializeConnection();
     }
 
     public void initializeConnection() {
@@ -29,12 +28,33 @@ public class Bot {
             String reply = from_exchange.readLine().trim();
             System.err.printf("The exchange replied: %s\n", reply);
         } catch (Exception e) {
-
+            e.printStackTrace(System.out);
         }
     }
 
-    public void readData() {
-
+    public void trade() {
+        try {
+            while(true) {
+                String replyStream = from_exchange.readLine().trim();
+                //System.err.printf("The exchange replied: %s\n", replyStream);
+                if (replyStream.contains("BOND") && replyStream.contains("BOOK")) {
+                    //System.err.printf("The exchange replied: %s\n", replyStream);
+                    int buyPrice = buyBond(replyStream);
+                    if (buyPrice != -1) {
+                        String buyReply = from_exchange.readLine().trim();
+                        System.err.printf("The exchange replied: %s\n", buyReply);
+                    }
+                    int sellPrice = sellBond(replyStream, buyPrice);
+                    if (sellPrice != -1) {
+                        String sellReply = from_exchange.readLine().trim();
+                        System.err.printf("The exchange replied: %s\n", sellReply);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("E");
+            initializeConnection();
+        }
     }
 
     public int buyBond(String stream) {
@@ -95,43 +115,7 @@ public class Bot {
     }
 
     public static void main(String[] args) {
-        try
-        {
-            while(true) {
-                Socket skt = new Socket("production", 20000);
-                BufferedReader from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
-                PrintWriter to_exchange = new PrintWriter(skt.getOutputStream(), true);
-
-                to_exchange.println("HELLO ABCDE");
-                String reply = from_exchange.readLine().trim();
-                System.err.printf("The exchange replied: %s\n", reply);
-
-                Bot b = new Bot(from_exchange, to_exchange);
-
-                while (true) {
-                    String replyStream = from_exchange.readLine().trim();
-                    //System.err.printf("The exchange replied: %s\n", replyStream);
-
-                    if (replyStream.contains("BOND") && replyStream.contains("BOOK")) {
-                        //System.err.printf("The exchange replied: %s\n", replyStream);
-                        int buyPrice = b.buyBond(replyStream);
-                        if (buyPrice != -1) {
-                            String buyReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", buyReply);
-                        }
-                        int sellPrice = b.sellBond(replyStream, buyPrice);
-                        if (sellPrice != -1) {
-                            String sellReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", sellReply);
-
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.out);
-        }
+        Bot b = new Bot();
+        b.trade();
     }
 }
