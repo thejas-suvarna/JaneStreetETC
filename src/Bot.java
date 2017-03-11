@@ -15,11 +15,12 @@ public class Bot {
     private BufferedReader from_exchange;
     private PrintWriter to_exchange;
     private int orderID = 1;
-    private String dataStream;
+    private String dataStream, instrument;
     private List<Integer> buyPrice, buyAmount, sellPrice, sellAmount;
 
     public Bot() {
         initializeConnection();
+
         buyPrice = new ArrayList<Integer>();
         buyAmount = new ArrayList<Integer>();
         sellPrice = new ArrayList<Integer>();
@@ -42,16 +43,67 @@ public class Bot {
     }
 
     public void readData() {
-        int buyStart = dataStream.indexOf("BUY") + 4;
-        int sellStart = dataStream.indexOf("SELL") + 5;
-        String buyList = dataStream.substring(buyStart, sellStart - 1);
-        //for()
+        int bookStart = dataStream.indexOf("BOOK");
+        int buyStart = dataStream.indexOf("BUY");
+        int sellStart = dataStream.indexOf("SELL");
+
+        instrument = dataStream.substring(bookStart + 5, buyStart - 1);
+
+        String buyTemp = "";
+        List<Integer> buyData = new ArrayList<Integer>();
+        char[] buyList = dataStream.substring(buyStart + 4, sellStart - 1).toCharArray();
+        if(buyList.length > 0) {
+            for (char c : buyList) {
+                if(c == ':' || c == ' ') {
+                    buyData.add(Integer.parseInt(buyTemp));
+                }
+                buyTemp += c;
+            }
+            for(int i = 0; i < buyData.size(); i++) {
+                if(i % 2 == 0) {
+                    buyPrice.add(buyData.get(i));
+                } else {
+                    buyAmount.add(buyData.get(i));
+                }
+            }
+        }
+
+        String sellTemp = "";
+        List<Integer> sellData = new ArrayList<Integer>();
+        if(sellStart + 3 != dataStream.length()) {
+            char[] sellList = dataStream.substring(sellStart + 5).toCharArray();
+            if (sellList.length > 0) {
+                for (char c : sellList) {
+                    if (c == ':' || c == ' ') {
+                        buyData.add(Integer.parseInt(sellTemp));
+                    }
+                    sellTemp += c;
+                }
+                for (int i = 0; i < sellData.size(); i++) {
+                    if (i % 2 == 0) {
+                        buyPrice.add(sellData.get(i));
+                    } else {
+                        buyAmount.add(sellData.get(i));
+                    }
+                }
+            }
+        }
+    }
+
+    public void clearData() {
+        instrument = "";
+        buyPrice.clear();
+        buyAmount.clear();
+        sellPrice.clear();
+        sellAmount.clear();
     }
 
     public void trade() {
         try {
             while(true) {
+                clearData();
                 dataStream = from_exchange.readLine().trim();
+                readData();
                 //System.err.printf("The exchange replied: %s\n", replyStream);
                 if (dataStream.contains("BOND") && dataStream.contains("BOOK")) {
                     //System.err.printf("The exchange replied: %s\n", replyStream);
