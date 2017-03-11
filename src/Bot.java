@@ -21,8 +21,8 @@ public class Bot {
     public void initializeConnection() {
         try {
             Socket skt = new Socket("production", 20000);
-            BufferedReader from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
-            PrintWriter to_exchange = new PrintWriter(skt.getOutputStream(), true);
+            from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
+            to_exchange = new PrintWriter(skt.getOutputStream(), true);
 
             to_exchange.println("HELLO ABCDE");
             String reply = from_exchange.readLine().trim();
@@ -52,7 +52,7 @@ public class Bot {
                 }
             }
         } catch (Exception e) {
-            System.out.println("E");
+            //e.printStackTrace(System.out);
             initializeConnection();
         }
     }
