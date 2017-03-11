@@ -10,12 +10,31 @@ import java.net.Socket;
 
 public class Bot {
 
-    public Bot() {
+    private BufferedReader from_exchange;
+    private PrintWriter to_exchange;
+    private int orderID = 1;
 
+    public Bot(BufferedReader from_exchange, PrintWriter to_exchange) {
+        this.from_exchange = from_exchange;
+        this.to_exchange = to_exchange;
     }
 
-    public void buyBond() {
+    public void buyBond(String replyStream) {
+        int sellStart = replyStream.indexOf("SELL");
+        int i = sellStart + 5;
+        String costString = "";
+        while(replyStream.charAt(i) != ':') {
+            costString += replyStream.charAt(i);
+            i++;
+        }
+        int cost = Integer.parseInt(costString);
+        String amountString = "";
+        while(replyStream.charAt(i) != ' ') {
+            amountString += replyStream.charAt(i);
+        }
+        int amount = Integer.parseInt(amountString);
 
+        
     }
 
     public void sellBond() {
@@ -33,7 +52,7 @@ public class Bot {
             String reply = from_exchange.readLine().trim();
             System.err.printf("The exchange replied: %s\n", reply);
 
-            Bot b = new Bot();
+            Bot b = new Bot(from_exchange, to_exchange);
 
             while(true) {
                 String replyStream = from_exchange.readLine().trim();
