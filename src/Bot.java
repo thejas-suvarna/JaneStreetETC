@@ -114,6 +114,7 @@ public class Bot {
                 clearData();
                 dataStream = from_exchange.readLine().trim();
                 readData();
+                int fairValueVALE = -1;
                 fairValue = calcFairValue();
                 //System.out.println("Fair Value: " + fairValue);
                 //System.err.printf("The exchange replied: %s\n", replyStream);
@@ -123,6 +124,12 @@ public class Bot {
                 }
 
                 if(dataStream.contains("BOOK") && fairValue != -1) {
+                    if(dataStream.contains("VALE")){
+                        fairValueVALE = fairValue;
+                    }
+                    if(dataStream.contains("VALBZ")){
+                        buy(fairValueVALE);
+                    }
                     buy(fairValue);
                     sell(fairValue);
                 }
