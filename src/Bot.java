@@ -19,42 +19,52 @@ public class Bot {
         this.to_exchange = to_exchange;
     }
 
-    public void buyBond(String replyStream) {
+    public boolean buyBond(String replyStream) {
         int sellStart = replyStream.indexOf("SELL");
-        int i = sellStart + 5;
-        String costString = "";
-        while(replyStream.charAt(i) != ':') {
-            costString += replyStream.charAt(i);
-            i++;
-        }
-        int cost = Integer.parseInt(costString);
-        String amountString = "";
-        while(replyStream.charAt(i) != ' ') {
-            amountString += replyStream.charAt(i);
-        }
-        int amount = Integer.parseInt(amountString);
+        if(sellStart != -1) {
+            int i = sellStart + 5;
+            String costString = "";
+            while (replyStream.charAt(i) != ':') {
+                System.out.println("Buy Cost Loop");
+                costString += replyStream.charAt(i);
+                i++;
+            }
+            int cost = Integer.parseInt(costString);
+            String amountString = "";
+            while (replyStream.charAt(i) != ' ') {
+                System.out.println("Buy Amount Loop");
+                amountString += replyStream.charAt(i);
+            }
+            int amount = Integer.parseInt(amountString);
 
-        
+            if (cost < 1000) {
+                to_exchange.println("ADD " + orderID + " BOND BUY " + cost + " " + amount);
+                orderID++;
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void sellBond(String stream) {
+    public boolean sellBond(String stream) {
         int pos = stream.lastIndexOf("SELL");
-        int end = stream.indexOf(':',pos);
-        String lowestSell = stream.substring(pos+2,end);
-        int infoend = stream.indexOf(' ',end);
-        String numtoSell = stream.substring(end + 2, infoend);
-        int position = Integer.parseInt(numtoSell);
-        int lowprice = Integer.parseInt(lowestSell);
-        int sellprice;
-        String trans;
-        if(lowprice <= 1001){
-            sellprice = lowprice-1;
-             trans = "ADD " + orderID + "BOND SELL " + sellprice + " " + position;
-            to_exchange.println(trans);
-            
+        if(pos != -1) {
+            int end = stream.indexOf(':', pos);
+            String lowestSell = stream.substring(pos + 2, end);
+            int infoend = stream.indexOf(' ', end);
+            String numtoSell = stream.substring(end + 2, infoend);
+            int position = Integer.parseInt(numtoSell);
+            int lowprice = Integer.parseInt(lowestSell);
+            int sellprice;
+            String trans;
+            if (lowprice <= 1001) {
+                sellprice = lowprice - 1;
+                trans = "ADD " + orderID + " BOND SELL " + sellprice + " " + position;
+                to_exchange.println(trans);
+                return true;
+            }
         }
-
-
+        return false;
     }
 
     public static void main(String[] args) {
@@ -72,10 +82,20 @@ public class Bot {
 
             while(true) {
                 String replyStream = from_exchange.readLine().trim();
-                System.err.printf("The exchange replied: %s\n", replyStream);
+                //System.err.printf("The exchange replied: %s\n", replyStream);
 
                 if(replyStream.charAt(5) == 'B') {
-
+                    System.err.printf("The exchange replied: %s\n", replyStream);
+                    boolean bought = b.buyBond(replyStream);
+                    if(bought) {
+                        String buyReply = from_exchange.readLine().trim();
+                        System.err.printf("The exchange replied: %s\n", buyReply);
+                    }
+                    boolean sold = b.sellBond(replyStream);
+                    if(sold) {
+                        String sellReply = from_exchange.readLine().trim();
+                        System.err.printf("The exchange replied: %s\n", sellReply);
+                    }
                 }
             }
         }
