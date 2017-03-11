@@ -37,7 +37,22 @@ public class Bot {
         
     }
 
-    public void sellBond() {
+    public void sellBond(String stream) {
+        int pos = stream.lastIndexOf("SELL");
+        int end = stream.indexOf(':',pos);
+        String lowestSell = stream.substring(pos+2,end);
+        int infoend = stream.indexOf(' ',end);
+        String numtoSell = stream.substring(end + 2, infoend);
+        int position = Integer.parseInt(numtoSell);
+        int lowprice = Integer.parseInt(lowestSell);
+        int sellprice;
+        String trans;
+        if(lowprice <= 1001){
+            sellprice = lowprice-1;
+             trans = "ADD " + orderID + "BOND SELL " + sellprice + " " + position;
+            to_exchange.println(trans);
+        }
+
 
     }
 
