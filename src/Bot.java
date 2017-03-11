@@ -137,13 +137,15 @@ public class Bot {
                     sell(1000);
                 }
 
-                else if(dataStream.contains("BOOK") && fairValue != -1 && fairValueVALBZ != -1) {
+                else if(dataStream.contains("BOOK") && fairValue != -1) {
                     if(dataStream.contains("VALBZ")){
                         fairValueVALBZ = fairValue;
                     }
                     if(dataStream.contains("VALE")){
-                        buy(fairValueVALBZ);
-                        sell(fairValueVALBZ);
+                        if(fairValueVALBZ != -1) {
+                            buy(fairValueVALBZ);
+                            sell(fairValueVALBZ);
+                        }
 
                     }
                     if(dataStream.contains("GS")){
