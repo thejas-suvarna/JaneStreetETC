@@ -126,7 +126,7 @@ public class Bot {
         }
     }
 
-    public int calcFairValue(ArrayList<Integer> buyPrice, ArrayList<Integer> sellPrice){
+    public int calcFairValue(){
         int maxBuy = Collections.max(buyPrice);
         int minSell = Collections.min(sellPrice);
         return (maxBuy + minSell)/2;
