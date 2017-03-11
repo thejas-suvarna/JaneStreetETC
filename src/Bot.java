@@ -51,6 +51,7 @@ public class Bot {
             sellprice = lowprice-1;
              trans = "ADD " + orderID + "BOND SELL " + sellprice + " " + position;
             to_exchange.println(trans);
+            
         }
 
 
