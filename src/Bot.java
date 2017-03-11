@@ -117,48 +117,14 @@ public class Bot {
                 fairValue = calcFairValue();
                 //System.out.println("Fair Value: " + fairValue);
                 //System.err.printf("The exchange replied: %s\n", replyStream);
-                if(fairValue != -1) {
-                    if (dataStream.contains("BOND") && dataStream.contains("BOOK")) {
-                        //System.err.printf("The exchange replied: %s\n", replyStream);
-                        int buyPrice = buyBond(dataStream);
-                        if (buyPrice != -1) {
-                            String buyReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", buyReply);
-                        }
-                        int sellPrice = sellBond(dataStream, buyPrice);
-                        if (sellPrice != -1) {
-                            String sellReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", sellReply);
-                        }
-                    }
+                if(dataStream.contains("BOOK") && dataStream.contains("BOND")) {
+                    buy(1000);
+                    sell(1000);
+                }
 
-                    if (dataStream.contains("VALE") && dataStream.contains("BOOK")) {
-                        //System.err.printf("The exchange replied: %s\n", replyStream);
-                        int buyPrice = buyVale(dataStream, calcFairValue());
-                        if (buyPrice != -1) {
-                            String buyReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", buyReply);
-                        }
-                        int sellPrice = sellVale(dataStream, buyPrice, calcFairValue());
-                        if (sellPrice != -1) {
-                            String sellReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", sellReply);
-                        }
-                    }
-
-                    if (dataStream.contains("VALBZ") && dataStream.contains("BOOK")) {
-                        //System.err.printf("The exchange replied: %s\n", replyStream);
-                        int buyPrice = buyValbz(dataStream, calcFairValue());
-                        if (buyPrice != -1) {
-                            String buyReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", buyReply);
-                        }
-                        int sellPrice = sellValbz(dataStream, buyPrice, calcFairValue());
-                        if (sellPrice != -1) {
-                            String sellReply = from_exchange.readLine().trim();
-                            System.err.printf("The exchange replied: %s\n", sellReply);
-                        }
-                    }
+                if(dataStream.contains("BOOK") && fairValue != -1) {
+                    buy(fairValue);
+                    sell(fairValue);
                 }
             }
         } catch (Exception e) {
