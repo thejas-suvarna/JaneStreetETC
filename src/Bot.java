@@ -31,8 +31,8 @@ public class Bot {
 
     public void initializeConnection() {
         try {
-            //System.out.println("Connect");
-            Socket skt = new Socket("production", 20000);
+            //Socket skt = new Socket("production", 20000);
+            Socket skt = new Socket("test-exch-abcde", 20000);
             from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
             to_exchange = new PrintWriter(skt.getOutputStream(), true);
 
@@ -144,7 +144,7 @@ public class Bot {
 
     public void buy(int fair) {
         int cost = Collections.min(sellPrice);
-        int amount = sellAmount.indexOf(cost);
+        int amount = sellAmount.get(sellPrice.indexOf(cost));
         while(cost < fair) {
             String send = "ADD " + orderID + " " + instrument + " BUY " + cost + " " + amount;
             System.out.println("Sending: " + send);
@@ -163,8 +163,8 @@ public class Bot {
     }
 
     public void sell(int fair) {
-        int cost = Collections.min(sellPrice);
-        int amount = sellAmount.indexOf(cost);
+        int cost = Collections.max(buyPrice);
+        int amount = buyAmount.get(buyPrice.indexOf(cost));
         while(cost > fair) {
             String send = "ADD " + orderID + " " + instrument + " SELL " + cost + " " + amount;
             System.out.println("Sending: " + send);
