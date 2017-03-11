@@ -19,6 +19,24 @@ public class Bot {
         this.to_exchange = to_exchange;
     }
 
+    public void initializeConnection() {
+        try {
+            Socket skt = new Socket("production", 20000);
+            BufferedReader from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
+            PrintWriter to_exchange = new PrintWriter(skt.getOutputStream(), true);
+
+            to_exchange.println("HELLO ABCDE");
+            String reply = from_exchange.readLine().trim();
+            System.err.printf("The exchange replied: %s\n", reply);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void readData() {
+
+    }
+
     public int buyBond(String stream) {
         //int sellStart = replyStream.indexOf("SELL");
         int pos = stream.lastIndexOf("SELL");
@@ -90,7 +108,7 @@ public class Bot {
 
                 Bot b = new Bot(from_exchange, to_exchange);
 
-                while (skt.isConnected()) {
+                while (true) {
                     String replyStream = from_exchange.readLine().trim();
                     //System.err.printf("The exchange replied: %s\n", replyStream);
 
