@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class Bot {
 
@@ -123,6 +124,17 @@ public class Bot {
             //e.printStackTrace(System.out);
             initializeConnection();
         }
+    }
+
+    public int calcFairValue(ArrayList<Integer> buyPrice, ArrayList<Integer> sellPrice){
+        int maxBuy = Collections.max(buyPrice);
+        int minSell = Collections.min(sellPrice);
+        return (maxBuy + minSell)/2;
+    }
+
+    public Bot(BufferedReader from_exchange, PrintWriter to_exchange) {
+        this.from_exchange = from_exchange;
+        this.to_exchange = to_exchange;
     }
 
     public int buyBond(String stream) {
