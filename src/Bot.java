@@ -40,25 +40,6 @@ public class Bot {
                 int sellprice;
                 String trans;
 
-                /*
-                int i = sellStart + 5;
-                String costString = "";
-                while (replyStream.charAt(i) != ':') {
-                    //System.out.println("Buy Cost Loop");
-                    costString += replyStream.charAt(i);
-                    i++;
-                }
-                int cost = Integer.parseInt(costString);
-                String amountString = "";
-                i++;
-                while (replyStream.charAt(i) != ' ' && i < replyStream.length()) {
-                    //System.out.println("Buy Amount Loop");
-                    amountString += replyStream.charAt(i);
-                    i++;
-                }
-                int amount = Integer.parseInt(amountString);
-                */
-
                 if (cost < 1000) {
                     String sendBuy = "ADD " + orderID + " BOND BUY " + cost + " " + position;
                     System.out.println("Sending: " + sendBuy);
@@ -98,32 +79,34 @@ public class Bot {
     public static void main(String[] args) {
         try
         {
-            Socket skt = new Socket("production", 20000);
-            BufferedReader from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
-            PrintWriter to_exchange = new PrintWriter(skt.getOutputStream(), true);
-
-            to_exchange.println("HELLO ABCDE");
-            String reply = from_exchange.readLine().trim();
-            System.err.printf("The exchange replied: %s\n", reply);
-
-            Bot b = new Bot(from_exchange, to_exchange);
-
             while(true) {
-                String replyStream = from_exchange.readLine().trim();
-                //System.err.printf("The exchange replied: %s\n", replyStream);
+                Socket skt = new Socket("production", 20000);
+                BufferedReader from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
+                PrintWriter to_exchange = new PrintWriter(skt.getOutputStream(), true);
 
-                if(replyStream.contains("BOND") && replyStream.contains("BOOK")) {
+                to_exchange.println("HELLO ABCDE");
+                String reply = from_exchange.readLine().trim();
+                System.err.printf("The exchange replied: %s\n", reply);
+
+                Bot b = new Bot(from_exchange, to_exchange);
+
+                while (skt.isConnected()) {
+                    String replyStream = from_exchange.readLine().trim();
                     //System.err.printf("The exchange replied: %s\n", replyStream);
-                    int buyPrice = b.buyBond(replyStream);
-                    if(buyPrice != -1) {
-                        String buyReply = from_exchange.readLine().trim();
-                        System.err.printf("The exchange replied: %s\n", buyReply);
-                    }
-                    int sellPrice = b.sellBond(replyStream, buyPrice);
-                    if(sellPrice != -1) {
-                        String sellReply = from_exchange.readLine().trim();
-                        System.err.printf("The exchange replied: %s\n", sellReply);
 
+                    if (replyStream.contains("BOND") && replyStream.contains("BOOK")) {
+                        //System.err.printf("The exchange replied: %s\n", replyStream);
+                        int buyPrice = b.buyBond(replyStream);
+                        if (buyPrice != -1) {
+                            String buyReply = from_exchange.readLine().trim();
+                            System.err.printf("The exchange replied: %s\n", buyReply);
+                        }
+                        int sellPrice = b.sellBond(replyStream, buyPrice);
+                        if (sellPrice != -1) {
+                            String sellReply = from_exchange.readLine().trim();
+                            System.err.printf("The exchange replied: %s\n", sellReply);
+
+                        }
                     }
                 }
             }
