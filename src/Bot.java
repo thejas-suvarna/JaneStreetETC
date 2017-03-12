@@ -118,15 +118,19 @@ public class Bot {
         try {
             int fairValueVALBZ = -1, fairValueVALE = -1, fairValueBOND = 1000, fairValueGS = -1, fairValueMS = -1,
                     fairValueWFC = -1, fairValueXLF = -1;
+           // System.err.print("About to enter trade");
             while(true) {
-                //System.out.println("buyPrice: " + buyPrice);
+
                 //System.out.println("buyAmount: " + buyAmount);
                 //System.out.println("sellPrice: " + sellPrice);
                 //System.out.println("sellAmount: " + sellAmount);
 
                 clearData();
+               // System.err.print("Shit");
                 dataStream = from_exchange.readLine().trim();
+              //  System.err.print("I'm Here");
                 readData();
+               // System.err.println("Oh Shit");
 
                 fairValue = calcFairValue();
                 //System.out.println("Fair Value: " + fairValue);
@@ -138,10 +142,16 @@ public class Bot {
                 }
 
                 else if(dataStream.contains("BOOK") && fairValue != -1) {
+                    //System.err.println("Hi");
                     if(dataStream.contains("VALBZ")){
                         fairValueVALBZ = fairValue;
+                        if(fairValueVALE != -1) {
+//                            buy(fairValueVALE + 7);
+//                            sell(fairValueVALE + 7);
+                        }
                     }
                     if(dataStream.contains("VALE")){
+                        fairValueVALE = fairValue;
                         if(fairValueVALBZ != -1) {
                             buy(fairValueVALBZ);
                             sell(fairValueVALBZ);
@@ -157,18 +167,20 @@ public class Bot {
                     if(dataStream.contains("WFC")){
                         fairValueWFC = fairValue;
                     }
-//                    if(dataStream.contains("XLF")){
-//                        if(fairValueGS != -1 || fairValueMS != -1 || fairValueWFC != -1) {
-//                            fairValueXLF = fairValue;
-//                            int predFairValue = (3 * fairValueBOND + 2 * fairValueGS + 3 * fairValueMS + 2 * fairValueWFC) / 11;
-//                            if (predFairValue < fairValueXLF) {
-//                                sell(predFairValue);
-//                            }
-//                            if (predFairValue > fairValueXLF) {
-//                                buy(predFairValue);
-//                            }
-//                        }
-//                    }
+                   // System.err.println("Hi2");
+                    if(dataStream.contains("XLF")){
+                        if(fairValueGS != -1 || fairValueMS != -1 || fairValueWFC != -1) {
+                            fairValueXLF = fairValue;
+                            int predFairValue = (3 * fairValueBOND + 2 * fairValueGS + 3 * fairValueMS + 2 * fairValueWFC) / 10;
+                           // System.err.print("Trying to do XLF");
+                            if (predFairValue < fairValueXLF) {
+                                sell(predFairValue);
+                            }
+                            if (predFairValue > fairValueXLF) {
+                                buy(predFairValue);
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -229,6 +241,7 @@ public class Bot {
     public static void main(String[] args) {
         Bot b = new Bot();
         while(true) {
+            //System.err.print("I'm going to Trade Now");
             b.trade();
         }
     }
