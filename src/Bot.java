@@ -33,7 +33,7 @@ public class Bot {
         try {
 
             //Socket skt = new Socket("production", 20000);
-            Socket skt = new Socket("test-exch-abcde", 20000);
+            Socket skt = new Socket("production", 20000);
             from_exchange = new BufferedReader(new InputStreamReader(skt.getInputStream()));
             to_exchange = new PrintWriter(skt.getOutputStream(), true);
 
@@ -157,18 +157,18 @@ public class Bot {
                     if(dataStream.contains("WFC")){
                         fairValueWFC = fairValue;
                     }
-                    if(dataStream.contains("XLF")){
-                        if(fairValueGS != -1 || fairValueMS != -1 || fairValueWFC != -1) {
-                            fairValueXLF = fairValue;
-                            int predFairValue = (3 * fairValueBOND + 2 * fairValueGS + 3 * fairValueMS + 2 * fairValueWFC) / 11;
-                            if (predFairValue < fairValueXLF) {
-                                sell(predFairValue);
-                            }
-                            if (predFairValue > fairValueXLF) {
-                                buy(predFairValue);
-                            }
-                        }
-                    }
+//                    if(dataStream.contains("XLF")){
+//                        if(fairValueGS != -1 || fairValueMS != -1 || fairValueWFC != -1) {
+//                            fairValueXLF = fairValue;
+//                            int predFairValue = (3 * fairValueBOND + 2 * fairValueGS + 3 * fairValueMS + 2 * fairValueWFC) / 11;
+//                            if (predFairValue < fairValueXLF) {
+//                                sell(predFairValue);
+//                            }
+//                            if (predFairValue > fairValueXLF) {
+//                                buy(predFairValue);
+//                            }
+//                        }
+//                    }
                 }
             }
         } catch (Exception e) {
